@@ -1,0 +1,6 @@
+.stack-work/
+Migration.cabal
+*~
+cabal
+*.db
+*.swp
