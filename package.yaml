@@ -24,6 +24,7 @@ dependencies:
 - wai
 - warp
 - http-types
+- aeson
 
 library:
   source-dirs: src

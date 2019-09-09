@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 8e1332c946119a1092d5c82424ad4b733ab6cee148589f486cba7e7d7b167a3a
+-- hash: 138215e28c3a45237bf33b748a771b5af7f948de244d32f133590e7bbc9f2e9d
 
 name:           PhotoJournal
 version:        0.1.0.0
@@ -33,7 +33,8 @@ library
   hs-source-dirs:
       src
   build-depends:
-      base >=4.7 && <5
+      aeson
+    , base >=4.7 && <5
     , http-types
     , wai
     , warp
@@ -48,6 +49,7 @@ executable PhotoJournal-exe
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       PhotoJournal
+    , aeson
     , base >=4.7 && <5
     , http-types
     , wai
@@ -64,6 +66,7 @@ test-suite PhotoJournal-test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       PhotoJournal
+    , aeson
     , base >=4.7 && <5
     , http-types
     , wai
