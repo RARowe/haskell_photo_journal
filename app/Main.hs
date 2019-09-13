@@ -7,6 +7,9 @@ import Network.HTTP.Types
 import Network.Wai.Handler.Warp (run)
 import qualified Data.Aeson as A
 import GHC.Generics
+import qualified Migration as M (runMigrations)
+import qualified Database.HDBC.Sqlite3 as S (connectSqlite3)
+import qualified Database.HDBC as DB (disconnect)
 
 headers :: ResponseHeaders
 headers = [("Content-Type", "text/plain"), ("Cache-Control", "public, max-age=604800")]
@@ -40,8 +43,17 @@ router req res =
 
 main :: IO ()
 main = do
+  putStrLn "Running migrations..."
+  runMigrations
   putStrLn "Running on http://localhost:8080"
   run 8080 router
+
+runMigrations :: IO ()
+runMigrations = do
+  conn <- S.connectSqlite3 "photo_journal.db"
+  M.runMigrations conn
+  DB.disconnect conn
+
 
 data FilmRoll = FilmRoll {
     title :: String

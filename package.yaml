@@ -25,6 +25,8 @@ dependencies:
 - warp
 - http-types
 - aeson
+- HDBC
+- HDBC-sqlite3
 
 library:
   source-dirs: src

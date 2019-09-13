@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 138215e28c3a45237bf33b748a771b5af7f948de244d32f133590e7bbc9f2e9d
+-- hash: 91ea2b0c864eca26e9516cdb0e1046bddc62cc8a3123c9655e2f690578bd4623
 
 name:           PhotoJournal
 version:        0.1.0.0
@@ -28,12 +28,20 @@ source-repository head
 library
   exposed-modules:
       Lib
+      Migration
+      Migration.Data
+      Migration.DataAccess
+      Migration.DataSource
+      Migration.Internal
+      Migration.Models
   other-modules:
       Paths_PhotoJournal
   hs-source-dirs:
       src
   build-depends:
-      aeson
+      HDBC
+    , HDBC-sqlite3
+    , aeson
     , base >=4.7 && <5
     , http-types
     , wai
@@ -48,7 +56,9 @@ executable PhotoJournal-exe
       app
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      PhotoJournal
+      HDBC
+    , HDBC-sqlite3
+    , PhotoJournal
     , aeson
     , base >=4.7 && <5
     , http-types
@@ -65,7 +75,9 @@ test-suite PhotoJournal-test
       test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      PhotoJournal
+      HDBC
+    , HDBC-sqlite3
+    , PhotoJournal
     , aeson
     , base >=4.7 && <5
     , http-types
