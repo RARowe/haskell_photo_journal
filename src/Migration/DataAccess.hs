@@ -3,7 +3,7 @@ module Migration.DataAccess
   , retrieveMigrationVersion
   , runMigrationsWithConfig
   ) where
-import qualified Migration.DataSource as DS
+import qualified DataSource as DS
 import qualified Migration.Models as M
 import Database.HDBC (IConnection, toSql)
 

@@ -1,4 +1,4 @@
-module Migration.DataSource
+module DataSource
     ( SqlPair
     , retrieveSingleInt
     , retrieveSingleBool
