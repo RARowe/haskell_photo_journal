@@ -1,7 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE DeriveGeneric #-}
 module Main where
-import Lib
 import qualified Network.Wai as W
 import Network.HTTP.Types
 import Network.Wai.Handler.Warp (run)
