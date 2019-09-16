@@ -1,6 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE DeriveGeneric #-}
 module Main where
+import Control.Exception (bracket)
 import qualified Network.Wai as W
 import Network.HTTP.Types
 import Network.Wai.Handler.Warp (run)
@@ -8,7 +9,8 @@ import qualified Data.Aeson as A
 import GHC.Generics
 import qualified Migration as M (runMigrations)
 import qualified Database.HDBC.Sqlite3 as S (connectSqlite3)
-import qualified Database.HDBC as DB (disconnect)
+import qualified Database.HDBC as DB (disconnect, IConnection)
+import qualified DataSource as DS (get, readIntFromRow, readStringFromRow)
 
 headers :: ResponseHeaders
 headers = [("Content-Type", "text/plain"), ("Cache-Control", "public, max-age=604800")]
@@ -26,11 +28,20 @@ notFound = W.responseLBS
   "404: Not found."
 
 api :: W.Application
-api req res = res $ W.responseLBS
-  status200
-  [("Content-Type", "application/json")]
-  (A.encode filmRolls)
+api req res =  do
+  results <- withConnection getAllFilmRolls
+  res $ W.responseLBS
+    status200
+    [("Content-Type", "application/json")]
+    (A.encode results)
 
+getAllFilmRolls :: DB.IConnection conn => conn -> IO [FilmRoll]
+getAllFilmRolls conn = do
+  rows <- DS.get conn "select Title, DateCreated from FilmRoll;" []
+  putStrLn $ show rows
+  return $ map rowToTable rows
+    where
+      rowToTable row = FilmRoll { title = DS.readStringFromRow row "Title", dateCreated = DS.readStringFromRow row "DateCreated" }
 
 router :: W.Application
 router req res =
@@ -47,25 +58,19 @@ main = do
   putStrLn "Running on http://localhost:8080"
   run 8080 router
 
-runMigrations :: IO ()
-runMigrations = do
-  conn <- S.connectSqlite3 "photo_journal.db"
-  M.runMigrations conn
-  DB.disconnect conn
+withConnection operation = bracket
+  (S.connectSqlite3 "photo_journal.db")
+  (DB.disconnect)
+  (operation)
 
+runMigrations :: IO ()
+runMigrations = withConnection M.runMigrations
 
 data FilmRoll = FilmRoll {
     title :: String
-  , photoCount :: Int
   , dateCreated :: String
   } deriving (Generic, Show)
 
 instance A.ToJSON FilmRoll
 
 instance A.FromJSON FilmRoll
-
-filmRolls :: [FilmRoll]
-filmRolls = [
-  FilmRoll{ title="In the park", photoCount=22, dateCreated="03/23/2019" },
-  FilmRoll{ title="Lake house weekend", photoCount=24, dateCreated="07/23/2019" },
-  FilmRoll{ title="Cecily and friends", photoCount=27, dateCreated="04/23/2019" }]

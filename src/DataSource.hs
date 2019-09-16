@@ -1,5 +1,9 @@
 module DataSource
     ( SqlPair
+    , SqlRow
+    , readStringFromRow
+    , readIntFromRow
+    , get
     , retrieveSingleInt
     , retrieveSingleBool
     , runBatchAndCommit
@@ -7,8 +11,33 @@ module DataSource
 import qualified Control.Monad as C (mapM_)
 import Data.Maybe (Maybe)
 import qualified Database.HDBC as DB
+import qualified Database.HDBC.SqlValue as SV (fromSql)
 
 type SqlPair = (String, [DB.SqlValue])
+type SqlRow = [(String, DB.SqlValue)]
+
+readStringFromRow :: SqlRow -> String -> String
+readStringFromRow row columnName = SV.fromSql $ findInRow row columnName
+
+readIntFromRow :: SqlRow -> String -> Int
+readIntFromRow row columnName = SV.fromSql $ findInRow row columnName
+
+findInRow :: SqlRow -> String -> DB.SqlValue
+findInRow row columnName = snd $ unsafeFind predicate row
+  where
+    predicate sqlPair = (fst sqlPair) == columnName
+
+unsafeFind :: (a -> Bool) -> [a] -> a
+unsafeFind pred [] = error "The thing you were looking for does not exist."
+unsafeFind pred (row:rows)
+  | pred row = row
+  | otherwise = unsafeFind pred rows
+
+get :: (DB.IConnection conn) => conn -> String -> [DB.SqlValue] -> IO [SqlRow]
+get conn sql params = do
+  statement <- DB.prepare conn sql
+  DB.execute statement params
+  DB.fetchAllRowsAL statement
 
 runBatchAndCommit :: DB.IConnection conn => conn -> [SqlPair] -> IO ()
 runBatchAndCommit conn sqlPairs = runBatch conn sqlPairs >> DB.commit conn
