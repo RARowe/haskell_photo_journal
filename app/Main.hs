@@ -49,7 +49,6 @@ router req res =
     "api":path -> api req res
     _ -> res notFound
 
-
 main :: IO ()
 main = do
   putStrLn "Running migrations..."
