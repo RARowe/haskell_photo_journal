@@ -38,7 +38,6 @@ api req res =  do
 getAllFilmRolls :: DB.IConnection conn => conn -> IO [FilmRoll]
 getAllFilmRolls conn = do
   rows <- DS.get conn "select Title, DateCreated from FilmRoll;" []
-  putStrLn $ show rows
   return $ map rowToTable rows
     where
       rowToTable row = FilmRoll { title = DS.readStringFromRow row "Title", dateCreated = DS.readStringFromRow row "DateCreated" }

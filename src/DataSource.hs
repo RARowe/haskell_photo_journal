@@ -37,7 +37,7 @@ get :: (DB.IConnection conn) => conn -> String -> [DB.SqlValue] -> IO [SqlRow]
 get conn sql params = do
   statement <- DB.prepare conn sql
   DB.execute statement params
-  DB.fetchAllRowsAL statement
+  DB.fetchAllRowsAL' statement
 
 runBatchAndCommit :: DB.IConnection conn => conn -> [SqlPair] -> IO ()
 runBatchAndCommit conn sqlPairs = runBatch conn sqlPairs >> DB.commit conn
