@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: aef4879b951d54c6f6a93611e585963c2e4d92c34b95eab3f5fd9f5041612f2f
+-- hash: 7b8de391a2d7503fd86b441f0589841cf1784d767f0cfe4edf91d5cee92e93ca
 
 name:           PhotoJournal
 version:        0.1.0.0
@@ -33,6 +33,7 @@ library
       Migration.DataAccess
       Migration.Internal
       Migration.Models
+      Models
   other-modules:
       Paths_PhotoJournal
   hs-source-dirs:

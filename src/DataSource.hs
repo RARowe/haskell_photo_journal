@@ -2,11 +2,11 @@ module DataSource
     ( SqlPair
     , SqlRow
     , readStringFromRow
-    , readIntFromRow
     , get
     , retrieveSingleInt
     , retrieveSingleBool
     , runBatchAndCommit
+    , FromSqlRow(..)
     ) where
 import qualified Control.Monad as C (mapM_)
 import Data.Maybe (Maybe)
@@ -15,12 +15,11 @@ import qualified Database.HDBC.SqlValue as SV (fromSql)
 
 type SqlPair = (String, [DB.SqlValue])
 type SqlRow = [(String, DB.SqlValue)]
+class FromSqlRow a where
+  fromSqlRow :: SqlRow -> a
 
 readStringFromRow :: SqlRow -> String -> String
 readStringFromRow row columnName = SV.fromSql $ findInRow row columnName
-
-readIntFromRow :: SqlRow -> String -> Int
-readIntFromRow row columnName = SV.fromSql $ findInRow row columnName
 
 findInRow :: SqlRow -> String -> DB.SqlValue
 findInRow row columnName = snd $ unsafeFind predicate row
