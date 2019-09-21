@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 7b8de391a2d7503fd86b441f0589841cf1784d767f0cfe4edf91d5cee92e93ca
+-- hash: ae8f04df23663ba173d597d955091e79af10b2c7f7071fd384adfd56d4f570ef
 
 name:           PhotoJournal
 version:        0.1.0.0
@@ -44,6 +44,7 @@ library
     , aeson
     , base >=4.7 && <5
     , http-types
+    , text
     , wai
     , warp
   default-language: Haskell2010
@@ -62,6 +63,7 @@ executable PhotoJournal-exe
     , aeson
     , base >=4.7 && <5
     , http-types
+    , text
     , wai
     , warp
   default-language: Haskell2010
@@ -81,6 +83,7 @@ test-suite PhotoJournal-test
     , aeson
     , base >=4.7 && <5
     , http-types
+    , text
     , wai
     , warp
   default-language: Haskell2010

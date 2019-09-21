@@ -27,6 +27,7 @@ dependencies:
 - aeson
 - HDBC
 - HDBC-sqlite3
+- text
 
 library:
   source-dirs: src
