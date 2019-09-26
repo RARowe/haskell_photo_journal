@@ -7,16 +7,25 @@ module DataSource
     , retrieveSingleBool
     , runBatchAndCommit
     , FromSqlRow(..)
+    , withConnection
     ) where
+import qualified Control.Exception as E (bracket)
 import qualified Control.Monad as C (mapM_)
 import Data.Maybe (Maybe)
 import qualified Database.HDBC as DB
 import qualified Database.HDBC.SqlValue as SV (fromSql)
+import qualified Database.HDBC.Sqlite3 as S (connectSqlite3)
 
 type SqlPair = (String, [DB.SqlValue])
 type SqlRow = [(String, DB.SqlValue)]
 class FromSqlRow a where
   fromSqlRow :: SqlRow -> a
+
+-- This needs to be changed
+withConnection operation = E.bracket
+  (S.connectSqlite3 "photo_journal.db")
+  (DB.disconnect)
+  (operation)
 
 readStringFromRow :: SqlRow -> String -> String
 readStringFromRow row columnName = SV.fromSql $ findInRow row columnName

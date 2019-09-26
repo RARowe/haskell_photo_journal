@@ -4,3 +4,4 @@ Migration.cabal
 cabal
 *.db
 *.swp
+.DS_Store
