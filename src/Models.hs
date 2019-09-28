@@ -4,7 +4,7 @@ module Models
   ) where
 import qualified Data.Aeson as A (ToJSON)
 import GHC.Generics (Generic)
-import DataSource (FromSqlRow(..), readStringFromRow)
+import DataSource.Internal (FromSqlRow(..), readStringFromRow)
 
 data FilmRoll = FilmRoll {
     title :: String

@@ -3,27 +3,27 @@ module Migration.DataAccess
   , retrieveMigrationVersion
   , runMigrationsWithConfig
   ) where
-import qualified DataSource as DS
+import qualified DataSource.Internal as DSI
 import qualified Migration.Models as M
 import Database.HDBC (IConnection, toSql)
 
 migrationVersionTableExists :: IConnection conn => conn -> IO (Maybe Bool)
-migrationVersionTableExists conn = DS.retrieveSingleBool conn migrationVersionTableExistsSql
+migrationVersionTableExists conn = DSI.retrieveSingleBool conn migrationVersionTableExistsSql
 
 retrieveMigrationVersion :: IConnection conn => conn -> IO (Maybe Int)
-retrieveMigrationVersion conn = DS.retrieveSingleInt conn databaseMigrationVersionSql
+retrieveMigrationVersion conn = DSI.retrieveSingleInt conn databaseMigrationVersionSql
 
 runMigrationsWithConfig :: IConnection conn => conn -> M.MigrationConfig -> IO ()
 runMigrationsWithConfig conn config
-  | M.databaseNeedsUpdating config = DS.runBatchAndCommit conn $ (updateDatabaseSqlPairs config) ++ [(updateDatabaseVersionSqlPair config)]
+  | M.databaseNeedsUpdating config = DSI.runBatchAndCommit conn $ (updateDatabaseSqlPairs config) ++ [(updateDatabaseVersionSqlPair config)]
   | otherwise = return ()
 
-updateDatabaseSqlPairs :: M.MigrationConfig -> [DS.SqlPair]
+updateDatabaseSqlPairs :: M.MigrationConfig -> [DSI.SqlPair]
 updateDatabaseSqlPairs config = map createSqlPair $ migrationsToRun
   where migrationsToRun = drop (M.databaseVersion config) (M.migrations config)
         createSqlPair migration = (M.upSql migration, [])
 
-updateDatabaseVersionSqlPair :: M.MigrationConfig -> DS.SqlPair
+updateDatabaseVersionSqlPair :: M.MigrationConfig -> DSI.SqlPair
 updateDatabaseVersionSqlPair config = (updateMigrationVersionSql, [versionSqlValue])
  where versionSqlValue = toSql $ M.desiredVersion config
 

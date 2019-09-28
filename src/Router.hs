@@ -8,7 +8,7 @@ import qualified Network.Wai as W
 import Network.HTTP.Types
 import qualified Data.Aeson as A (encode)
 import qualified Models as MO (FilmRoll(..))
-import qualified DataSource as DS (withConnection, get, fromSqlRow)
+import qualified DataSource as DS (getAllFilmRolls, getFilmRoll)
 import qualified Router.Internal as RI (makeRoute, getUri, getIds)
 
 router :: W.Application
@@ -44,26 +44,16 @@ notFound = W.responseLBS
 
 getAllFilmRolls :: W.Application
 getAllFilmRolls req res =  do
-  results <- DS.withConnection getAllFilmRollsDb
+  results <- DS.getAllFilmRolls
   res $ W.responseLBS
     status200
     [("Content-Type", "application/json")]
     (A.encode results)
-
-getAllFilmRollsDb :: DB.IConnection conn => conn -> IO [MO.FilmRoll]
-getAllFilmRollsDb conn = do
-  rows <- DS.get conn "select Title, DateCreated from FilmRoll;" []
-  return $ map DS.fromSqlRow rows
 
 getFilmRoll :: Int -> W.Application
 getFilmRoll filmRollId req res =  do
-  results <- DS.withConnection $ getFilmRollDb filmRollId
+  results <- DS.getFilmRoll filmRollId
   res $ W.responseLBS
     status200
     [("Content-Type", "application/json")]
     (A.encode results)
-
-getFilmRollDb :: DB.IConnection conn => Int -> conn -> IO MO.FilmRoll
-getFilmRollDb filmRollId conn = do
-  rows <- DS.get conn "select Title, DateCreated from FilmRoll where RowId = ?;" [DB.toSql filmRollId]
-  return $ DS.fromSqlRow $ head rows
