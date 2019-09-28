@@ -1,6 +1,7 @@
 module Router.Internal
   ( makeRoute
   , getUri
+  , getIds
   ) where
 import qualified Data.Either as E (lefts)
 import qualified Data.List as L (intercalate)
@@ -11,6 +12,9 @@ type Route = (String, [Int])
 
 getUri :: Route -> String
 getUri (uri, _) = uri
+
+getIds :: Route -> [Int]
+getIds (_, ids) = ids
 
 makeRoute :: W.Request -> Route
 makeRoute req = (makeRouteUri segments, getRouteIds segments)
